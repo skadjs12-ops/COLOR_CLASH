@@ -1,0 +1,141 @@
+[
+  {
+    "height": 800,
+    "overflow": 0,
+    "screen": "home",
+    "width": 1280
+  },
+  {
+    "height": 800,
+    "outside": 0,
+    "overflow": 0,
+    "screen": "modes",
+    "width": 1280
+  },
+  {
+    "height": 800,
+    "outside": 0,
+    "overflow": 0,
+    "plates": [
+      200,
+      200
+    ],
+    "screen": "battle",
+    "width": 1280
+  },
+  {
+    "fontsLoaded": false,
+    "height": 900,
+    "overflow": 0,
+    "screen": "home",
+    "width": 1440
+  },
+  {
+    "height": 900,
+    "outside": 0,
+    "overflow": 0,
+    "screen": "modes",
+    "width": 1440
+  },
+  {
+    "height": 900,
+    "outside": 0,
+    "overflow": 0,
+    "plates": [
+      230,
+      230
+    ],
+    "screen": "battle",
+    "targets": [
+      "rgb(249, 119, 60)",
+      "rgb(204, 205, 214)",
+      "rgb(70, 70, 86)"
+    ],
+    "width": 1440
+  },
+  {
+    "flow": "local-1v1",
+    "regularActions": 28,
+    "claimPoints": 125,
+    "finalScore": [
+      325,
+      0
+    ],
+    "result": "RED WINS",
+    "verified": true
+  },
+  {
+    "height": 768,
+    "overflow": 0,
+    "screen": "home",
+    "width": 1024
+  },
+  {
+    "height": 768,
+    "outside": 0,
+    "overflow": 0,
+    "screen": "modes",
+    "width": 1024
+  },
+  {
+    "controlsBottom": 744,
+    "height": 768,
+    "outside": 0,
+    "overflow": 0,
+    "plates": [
+      190,
+      190
+    ],
+    "screen": "battle",
+    "width": 1024
+  },
+  {
+    "height": 844,
+    "overflow": 0,
+    "screen": "home",
+    "width": 390
+  },
+  {
+    "height": 844,
+    "outside": 0,
+    "overflow": 0,
+    "screen": "modes",
+    "width": 390
+  },
+  {
+    "height": 844,
+    "outside": 0,
+    "overflow": 0,
+    "plates": [
+      144.296875,
+      144.296875
+    ],
+    "screen": "battle",
+    "width": 390
+  },
+  {
+    "edition": "PLAY.html via HTTP preview",
+    "fonts": [],
+    "height": 844,
+    "overflow": 0,
+    "recipe": "1 / 6 방울",
+    "screen": "battle",
+    "turn": "TURN 3/ 28",
+    "width": 390
+  },
+  {
+    "console": {
+      "applicationErrors": [],
+      "extensionMetadataErrors": 101
+    },
+    "notes": "Responsive views are real iframe CSS viewports; the PC preview is scaled to fit the capture. PLAY.html was tested via HTTP preview, not file://."
+  },
+  {
+    "offlineFontProof": {
+      "arcade": true,
+      "fontFaceCount": 2,
+      "hangul": true,
+      "status": "loaded"
+    }
+  }
+]

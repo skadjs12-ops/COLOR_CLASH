@@ -1,0 +1,60 @@
+{
+  "seed": 20261104,
+  "pool": 295,
+  "levels": [
+    11,
+    93,
+    191
+  ],
+  "minSeparationIn1000Starts": 0.09803604656693829,
+  "targets": [
+    {
+      "id": "20261104-0",
+      "color": "#6BAE3D",
+      "recipe": [
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "minDrops": 2,
+      "level": 0,
+      "points": 100,
+      "maxSinglePigmentScore": 44,
+      "minWinningDrops": 2
+    },
+    {
+      "id": "20261104-1",
+      "color": "#FFBCDC",
+      "recipe": [
+        1,
+        0,
+        0,
+        3,
+        0
+      ],
+      "minDrops": 4,
+      "level": 1,
+      "points": 150,
+      "maxSinglePigmentScore": 60,
+      "minWinningDrops": 3
+    },
+    {
+      "id": "20261104-2",
+      "color": "#FCFAAF",
+      "recipe": [
+        0,
+        1,
+        0,
+        5,
+        0
+      ],
+      "minDrops": 5,
+      "level": 2,
+      "points": 200,
+      "maxSinglePigmentScore": 75,
+      "minWinningDrops": 3
+    }
+  ]
+}

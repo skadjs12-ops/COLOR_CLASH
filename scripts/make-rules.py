@@ -1,0 +1,41 @@
+import json, copy
+member="auth != null && ("+' || '.join("root.child('cc/members').child($code).child('%s/uid').val() === auth.uid"%i for i in range(4))+")"
+meta="root.child('cc/meta').child($code)"
+game="root.child('cc/games').child($code)"
+members="root.child('cc/members').child($code)"
+own="auth != null && "+members+".child($seat).child('uid').val() === auth.uid"
+allready=" && ".join(members+".child('%d/ready').val() === true"%i for i in range(2))+" && ("+meta+".child('count').val() === 2 || ("+" && ".join(members+".child('%d/ready').val() === true"%i for i in range(2,4))+"))"
+commit="root.child('cc/finals').child($code).child($match).child('commits')"
+allcommitted=commit+".hasChildren(['0','1']) && ("+meta+".child('count').val() === 2 || "+commit+".hasChildren(['2','3']))"
+rec={'.validate':"newData.hasChildren(['0','1','2','3','4']) && newData.child('0').val() + newData.child('1').val() + newData.child('2').val() + newData.child('3').val() + newData.child('4').val() <= 6",'$i':{'.validate':"$i.matches(/^[0-4]$/) && newData.isNumber() && newData.val() >= 0 && newData.val() <= 6 && newData.val() % 1 === 0"}}
+number=lambda lo,hi:{'.validate':f'newData.isNumber() && newData.val() >= {lo} && newData.val() <= {hi} && newData.val() % 1 === 0'}
+r={'rules':{'.read':False,'.write':False,'cc':{}}};c=r['rules']['cc']
+c['meta']={'$code':{'.read':'auth != null','.write':"auth != null && !data.exists() && newData.child('owner').val() === auth.uid",'.validate':"$code.matches(/^[0-9]{6}$/) && newData.hasChildren(['owner','count','created','closed'])",'owner':{'.validate':'newData.isString()'},'count':{'.validate':'newData.val() === 2 || newData.val() === 4'},'created':{'.validate':'newData.isNumber() && newData.val() <= now + 60000'},'closed':{'.validate':'newData.val() === false'},'$other':{'.validate':False}}}
+no_duplicate=' && '.join("(!"+members+".child('%s').exists() || "%i+members+".child('%s/uid').val() !== auth.uid)"%i for i in range(4))
+c['members']={'$code':{'.read':'auth != null','$seat':{'.write':"auth != null && !"+game+".exists() && ((!data.exists() && newData.child('uid').val() === auth.uid && "+no_duplicate+") || (data.child('uid').val() === auth.uid && (!newData.exists() || newData.child('uid').val() === auth.uid)))",'.validate':"$seat.matches(/^[0-3]$/) && ($seat === '0' || $seat === '1' || "+meta+".child('count').val() === 4) && ($seat !== '0' || "+meta+".child('owner').val() === auth.uid) && "+meta+".exists() && newData.hasChildren(['uid','ready'])",'uid':{'.validate':'newData.isString()'},'ready':{'.validate':'newData.isBoolean()'},'$other':{'.validate':False}}}}
+write="("+member+") && ((!data.exists() && "+meta+".child('owner').val() === auth.uid && "+allready+" && newData.child('revision').val() === 0 && newData.child('phase').val() === 'battle') || (data.exists() && newData.child('revision').val() === data.child('revision').val()+1 && newData.child('seed').val() === data.child('seed').val() && newData.child('match').val() === data.child('match').val() && ((data.child('phase').val() === 'battle' && "+members+".child(data.child('turn').val()+'').child('uid').val() === auth.uid && newData.child('actor').val() === data.child('turn').val() && newData.child('lastId').val() !== data.child('lastId').val() && (newData.child('phase').val() === 'battle' || newData.child('phase').val() === 'final')) || (data.child('phase').val() === 'final' && newData.child('phase').val() === 'result' && root.child('cc/finals').child($code).child(data.child('match').val()).child('reveals').hasChildren(['0','1']) && (data.child('count').val() === 2 || root.child('cc/finals').child($code).child(data.child('match').val()).child('reveals').hasChildren(['2','3']))))))"
+c['games']={'$code':{'.read':member,'.write':write,'.validate':"newData.hasChildren(['version','match','seed','revision','actor','phase','count','turn','remaining','scores','dishes','targets','serial','lastId','finalTarget']) && newData.child('count').val() === "+meta+".child('count').val()",'version':{'.validate':'newData.val() === 1'},'match':{'.validate':'newData.isString() && newData.val().length <= 64'},'seed':number(0,2147483647),'revision':number(0,33),'actor':number(0,3),'phase':{'.validate':"newData.val() === 'battle' || newData.val() === 'final' || newData.val() === 'result'"},'count':number(2,4),'turn':number(0,3),'remaining':{'.validate':"newData.hasChildren(['0','1']) && (newData.parent().child('count').val() === 2 || newData.hasChildren(['2','3']))",'$seat':number(0,14)},'scores':{'.validate':"newData.hasChildren(['0','1'])",'$team':number(0,5000)},'dishes':{'.validate':"newData.hasChildren(['0','1'])",'$team':{'.validate':"newData.hasChildren(['0','1'])",'$dish':copy.deepcopy(rec)}},'targets':{'.validate':"newData.hasChildren(['0','1','2'])",'$i':{'.validate':"newData.hasChildren(['id','color','recipe','level','points','minDrops'])",'recipe':copy.deepcopy(rec)}},'serial':number(3,35),'captures':{'$i':{'.validate':"newData.hasChildren(['color','similarity','points','seat'])",'similarity':number(80,100),'points':number(100,225),'seat':number(0,3),'color':{'.validate':"newData.isString() && newData.val().matches(/^#[0-9a-fA-F]{6}$/)"},'$other':{'.validate':False}}},'lastId':{'.validate':'newData.isString() && newData.val().length <= 64'},'feedback':{'.validate':'newData.isString() && newData.val().length < 80'},'finalTarget':{'.validate':"newData.hasChildren(['id','color','recipe','level','points','minDrops'])",'recipe':copy.deepcopy(rec)},'finalRecipes':{'$seat':copy.deepcopy(rec)},'finalAccuracy':{'$seat':number(0,100)},'$other':{'.validate':False}}}
+c['presence']={'$code':{'.read':member,'$seat':{'.write':own,'.validate':"newData.hasChildren(['online','lastSeen'])",'online':{'.validate':'newData.isBoolean()'},'lastSeen':{'.validate':'newData.isNumber()'},'$other':{'.validate':False}}}}
+c['finals']={'$code':{'$match':{'commits':{'.read':member,'$seat':{'.write':own+" && "+game+".child('match').val() === $match && "+game+".child('phase').val() === 'final' && (!data.exists() || newData.val() === data.val())",'.validate':"newData.isString() && newData.val().matches(/^[0-9a-f]{64}$/)"}},'reveals':{'.read':member+' && '+allcommitted,'$seat':{'.write':own+' && '+allcommitted+" && "+game+".child('match').val() === $match && "+game+".child('phase').val() === 'final' && (!data.exists() || newData.val() === data.val())",'.validate':"newData.hasChildren(['recipe','salt'])",'recipe':{**rec,'.validate':"newData.hasChildren(['0','1','2','3','4']) && newData.child('0').val() + newData.child('1').val() + newData.child('2').val() + newData.child('3').val() + newData.child('4').val() <= 6 && newData.child('0').val() + newData.child('1').val() + newData.child('2').val() + newData.child('3').val() + newData.child('4').val() > 0"},'salt':{'.validate':'newData.isString() && newData.val().length >= 32 && newData.val().length <= 128'},'$other':{'.validate':False}}}}}}
+# Restrict fixed-size records and turn transitions, beyond numeric bounds.
+g=c['games']['$code']
+# Round submissions are retained until BLUE acts. Tied awards can contain half points.
+g['scores']['$team']['.validate']="newData.isNumber() && newData.val() >= 0 && newData.val() <= 5000 && (newData.val() * 2) % 1 === 0"
+g['captures']['$i']['points']['.validate']="newData.isNumber() && newData.val() >= 50 && newData.val() <= 225 && (newData.val() * 2) % 1 === 0"
+g['pending']={
+ '.validate':"newData.hasChildren(['0'])",
+ '$index':{
+  '.validate':"$index === '0' && newData.hasChildren(['seat','targetId','recipe']) && newData.child('seat').val() === newData.parent().parent().child('actor').val()",
+  'seat':{'.validate':"newData.isNumber() && (newData.val() === 0 || newData.val() === 2)"},
+  'targetId':{'.validate':"newData.isString() && newData.val().length <= 64"},
+  'recipe':copy.deepcopy(rec),
+  '$other':{'.validate':False}
+ }
+}
+for key,limit in [('remaining',4),('scores',2),('targets',3),('finalRecipes',4),('finalAccuracy',4)]:
+ wildcard=next(k for k in g[key] if k.startswith('$'))
+ child=g[key][wildcard]
+ child['.validate']='('+child.get('.validate','true')+") && "+wildcard+".matches(/^[0-"+str(limit-1)+"]$/)"
+g['dishes']['$team']['.validate']+=" && $team.matches(/^[0-1]$/)"
+
+open('database.rules.json','w').write(json.dumps(r,indent=2))
